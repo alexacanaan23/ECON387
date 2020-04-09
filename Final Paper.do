@@ -5,8 +5,8 @@
 *LOAD capiq firm data
 clear
 use "/Users/canaan/Desktop/GitHub/ECON387/capiq_firm_income_data.dta"
-append using "/Users/canaan/Desktop/GitHub/ECON387/capiq_firm_balancesheet_data.dta"
-merge m:1 capiq_id using "/Users/canaan/Desktop/GitHub/ECON387/capiq_firm_info_data.dta"
+joinby capiq_id datacqtr_ciq kypermno permco using "/Users/canaan/Desktop/GitHub/ECON387/capiq_firm_balancesheet_data.dta"
+joinby capiq_id using "/Users/canaan/Desktop/GitHub/ECON387/capiq_firm_info_data.dta"
 describe
 *sort by sic code to choose an industry
 sort sic
@@ -33,7 +33,7 @@ gen CURRENT_RATIO = IQ_TOTAL_CA_CS/IQ_TOTAL_CL_CS
 label var CURRENT_RATIO "CURRENT RATIO"
 
 *cash ratio
-gen CASH_RATIO = IQ_CAS_EQUIV_CS/IQ_TOTAL_CL_CS
+gen CASH_RATIO = IQ_CASH_EQUIV_CS/IQ_TOTAL_CL_CS
 label var CASH_RATIO "CASH RATIO"
 
 *LEVERAGE RATIOS
@@ -600,15 +600,29 @@ esttab . using sumstat.rtf, ///
    
 *figures
 graph box ROA
+graph box ROE
+histogram GD_RATING
+histogram REC_FRIEND
+histogram APPROVE_CEO
    
 *REGRESSIONS--------------------------------------------------------------------
+
+reg ROA GD_RATING
+reg ROA REC_FRIEND
+reg ROA APPROVE_CEO
+reg ROA GD_RATING REC_FRIEND APPROVE_CEO
+
+reg ROE GD_RATING
+reg ROE REC_FRIEND
+reg ROE APPROVE_CEO
+reg ROE GD_RATING REC_FRIEND APPROVE_CEO
 
 . ssc install estout, replace
 eststo A : reg ROA GD_RATING REC_FRIEND APPROVE_CEO
 eststo B : reg ROE GD_RATING REC_FRIEND APPROVE_CEO
-eststo C : reg VALUE Year2009 FEMALE CITIZEN GRAD ZINC2 HHAGE
-eststo D : reg VALUE Year2009 SPAN BLACK MD ASIAN OTHER FEMALE CITIZEN
-eststo E : reg VALUE Year2009 SPAN BLACK MD ASIAN OTHER FEMALE CITIZEN GRAD ZINC2 HHAGE
+eststo C : reg 
+eststo D : reg 
+eststo E : reg 
 esttab A B C D E using OLSreg.doc, se r2
 
 *-------------------------------------------------------------------------------
