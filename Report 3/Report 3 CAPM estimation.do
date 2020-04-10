@@ -3,6 +3,7 @@ clear
 *import daily return estimates
 import delimited "/Users/canaan/Desktop/TBILL.csv"
 
+recode tbillrft = tbillrft/365
 *--------------------ESTIMATE CAPM----------------------------------------------
 *generate Y variables for S&P sector and individual companies
 gen Ysp = sphhprit - tbillrft
