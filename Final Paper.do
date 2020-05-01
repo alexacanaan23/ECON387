@@ -612,6 +612,42 @@ replace REC_FRIEND = .61 if capiq_id == "IQ315476"
 replace APPROVE_CEO = .78 if capiq_id == "IQ315476"
 
 *INTRODUCTORY FIGURES-----------------------------------------------------------
+*preliminary figures
+graph box ROA, title(ROA for Financial Services Companies in 2019)
+graph box ROE, title(ROE for Financial Services Companies in 2019)
+histogram GD_RATING, kdensity title(Overall Employee Satisfaction in Financial Services) subtitle(Rating in 2019 Out of 5 Stars) xtitle(Employee Satisfaction Rating)
+histogram REC_FRIEND, kdensity title(Likely to Recommend the Company to a Friend) subtitle(Rating in 2019) xtitle(Recommendation Rating)
+histogram APPROVE_CEO, kdensity title(CEO Approval Rating in Financial Services) subtitle(Rating in 2019) xtitle(Approval Rating)
+
+*drop outliers
+drop if IQ_TOTAL_EQUITY_CS < 0
+drop if ROE <= -1
+drop if GD_RATING <= 1
+drop if APPROVE_CEO < .4
+drop if ROE > .15
+
+*figures
+graph box ROA, title(ROA for Financial Services Companies in 2019)
+graph box ROE, title(ROE for Financial Services Companies in 2019)
+histogram GD_RATING, kdensity title(Overall Employee Satisfaction in Financial Services) subtitle(Rating in 2019 Out of 5 Stars) xtitle(Employee Satisfaction Rating)
+histogram REC_FRIEND, kdensity title(Likely to Recommend the Company to a Friend) subtitle(Rating in 2019) xtitle(Recommendation Rating)
+histogram APPROVE_CEO, kdensity title(CEO Approval Rating in Financial Services) subtitle(Rating in 2019) xtitle(Approval Rating)
+*dotplot
+*graph box fev, over(sex)
+*scatter
+twoway scatter GD_RATING ROA
+twoway mband GD_RATING ROA
+twoway scatter GD_RATING ROE
+twoway mband GD_RATING ROE
+twoway scatter ROA ROE GD_RATING
+scatter GD_RATING EPS
+*plot median
+twoway mband GD_RATING EPS
+*vioplots
+capture ssc install vioplot
+vioplot ROA, title(ROA for Financial Services Companies in 2019)
+vioplot ROE, title(ROE for Financial Services Companies in 2019)
+
 *summary statistics
 capture ssc install estout
 estpost summarize GD_RATING REC_FRIEND APPROVE_CEO ROA ROE, detail
@@ -631,13 +667,6 @@ esttab . using sumstat.rtf, ///
    cells("mean(fmt(%5.2f) label(Mean)) sd(label(SD)) min(label(Min)) max(label(Max))  count(fmt(%9.0f) label(N))") ///
    noobs label nonum replace mlabels(none) title(Summary Statistics)
    
-*figures
-graph box ROA
-graph box ROE
-histogram GD_RATING
-histogram REC_FRIEND
-histogram APPROVE_CEO
-   
 *REGRESSIONS--------------------------------------------------------------------
 
 reg ROA GD_RATING 
@@ -649,11 +678,6 @@ reg ROA GD_RATING IQ_PROFESSIONAL_SALARY IQ_PROFESSIONAL_CALCULATED_COMP IQ_PROF
 reg ROA REC_FRIEND IQ_PROFESSIONAL_SALARY IQ_PROFESSIONAL_CALCULATED_COMP IQ_PROFESSIONAL_RESTRICTED_STOCK IQ_PROFESSIONAL_OPTION_AWARDS
 reg ROA APPROVE_CEO IQ_PROFESSIONAL_SALARY IQ_PROFESSIONAL_CALCULATED_COMP IQ_PROFESSIONAL_RESTRICTED_STOCK IQ_PROFESSIONAL_OPTION_AWARDS
 reg ROA GD_RATING REC_FRIEND APPROVE_CEO IQ_PROFESSIONAL_SALARY IQ_PROFESSIONAL_CALCULATED_COMP IQ_PROFESSIONAL_RESTRICTED_STOCK IQ_PROFESSIONAL_OPTION_AWARDS
-
-reg ROE GD_RATING
-reg ROE REC_FRIEND
-reg ROE APPROVE_CEO
-reg ROE GD_RATING REC_FRIEND APPROVE_CEO
 
 reg ROE GD_RATING IQ_PROFESSIONAL_SALARY IQ_PROFESSIONAL_CALCULATED_COMP IQ_PROFESSIONAL_RESTRICTED_STOCK IQ_PROFESSIONAL_OPTION_AWARDS
 reg ROE REC_FRIEND IQ_PROFESSIONAL_SALARY IQ_PROFESSIONAL_CALCULATED_COMP IQ_PROFESSIONAL_RESTRICTED_STOCK IQ_PROFESSIONAL_OPTION_AWARDS
@@ -727,10 +751,11 @@ reg GD_RATING ROE REC_FRIEND APPROVE_CEO CASH_RATIO CURRENT_RATIO DEBT_EQUITY_RA
 reg GD_RATING ROA REC_FRIEND APPROVE_CEO CASH_RATIO CURRENT_RATIO DEBT_EQUITY_RATIO EQUITY_MULTIPLIER NETDEBT_EBITDA INVENTORY_TURNOVER DAYS_SALES_INVENTORY PROFIT_MARGIN EBITDA_SALES EPS IQ_PROFESSIONAL_SALARY IQ_PROFESSIONAL_CALCULATED_COMP IQ_PROFESSIONAL_RESTRICTED_STOCK IQ_PROFESSIONAL_OPTION_AWARDS
 reg GD_RATING ROE REC_FRIEND APPROVE_CEO CASH_RATIO CURRENT_RATIO DEBT_EQUITY_RATIO EQUITY_MULTIPLIER NETDEBT_EBITDA INVENTORY_TURNOVER DAYS_SALES_INVENTORY PROFIT_MARGIN EBITDA_SALES EPS IQ_PROFESSIONAL_SALARY IQ_PROFESSIONAL_CALCULATED_COMP IQ_PROFESSIONAL_RESTRICTED_STOCK IQ_PROFESSIONAL_OPTION_AWARDS
 
+reg GD_RATING PROFIT_MARGIN
 
 . ssc install estout, replace
-eststo A : reg ROA GD_RATING REC_FRIEND APPROVE_CEO
-eststo B : reg ROE GD_RATING REC_FRIEND APPROVE_CEO
+eststo A : reg 
+eststo B : reg 
 eststo C : reg 
 eststo D : reg 
 eststo E : reg 
